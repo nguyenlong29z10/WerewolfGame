@@ -22,6 +22,7 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://nguyenlong-mshn.vercel.app",
     process.env.CLIENT_URL
 ].filter(Boolean);
 
