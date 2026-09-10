@@ -1,3 +1,8 @@
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 * {
     box-sizing: border-box;
 }
@@ -6,6 +11,7 @@ html,
 body,
 #root {
     margin: 0;
+
     min-height: 100%;
 }
 
@@ -35,6 +41,11 @@ button {
     cursor: pointer;
 }
 
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 .page {
     min-height: 100vh;
 
@@ -47,6 +58,11 @@ button {
     align-items: center;
 }
 
+
+/* =========================================================
+   MAIN CARDS
+========================================================= */
+
 .home-card,
 .join-card,
 .waiting-card,
@@ -54,6 +70,7 @@ button {
 .setup-container,
 .history-container {
     width: 100%;
+
     max-width: 520px;
 
     background:
@@ -74,6 +91,11 @@ button {
         rgba(0, 0, 0, 0.35);
 }
 
+
+/* =========================================================
+   TITLE
+========================================================= */
+
 h1 {
     text-align: center;
 
@@ -82,11 +104,21 @@ h1 {
     margin-top: 0;
 }
 
+
+/* =========================================================
+   WOLF ICON
+========================================================= */
+
 .wolf-icon {
     text-align: center;
 
     font-size: 64px;
 }
+
+
+/* =========================================================
+   ROOM CODE
+========================================================= */
 
 .room-code {
     text-align: center;
@@ -99,6 +131,11 @@ h1 {
 
     margin: 16px 0;
 }
+
+
+/* =========================================================
+   QR CODE
+========================================================= */
 
 .qr-container {
     display: flex;
@@ -117,6 +154,11 @@ h1 {
 
     height: auto;
 }
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
 
 .primary-btn {
     width: 100%;
@@ -152,6 +194,11 @@ h1 {
     cursor: not-allowed;
 }
 
+
+/* =========================================================
+   INPUT
+========================================================= */
+
 input {
     width: 100%;
 
@@ -159,7 +206,8 @@ input {
 
     border-radius: 14px;
 
-    border: 1px solid
+    border:
+        1px solid
         rgba(255, 255, 255, 0.15);
 
     background:
@@ -172,6 +220,11 @@ input {
     margin-top: 20px;
 }
 
+
+/* =========================================================
+   PLAYER COUNT
+========================================================= */
+
 .player-count {
     text-align: center;
 
@@ -182,6 +235,14 @@ input {
     margin: 24px 0;
 }
 
+
+/* =========================================================
+   PLAYER LIST
+   - Hỗ trợ nhiều người
+   - Scroll riêng
+   - 50 người vẫn gọn
+========================================================= */
+
 .player-list {
     display: flex;
 
@@ -189,10 +250,23 @@ input {
 
     gap: 10px;
 
-    max-height: 300px;
+    max-height: min(45vh, 400px);
 
     overflow-y: auto;
+
+    padding-right: 5px;
+
+    scroll-behavior: smooth;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
 }
+
+
+/* =========================================================
+   PLAYER ITEM
+========================================================= */
 
 .player-item {
     display: flex;
@@ -207,12 +281,16 @@ input {
 
     background:
         rgba(255, 255, 255, 0.06);
+
+    flex-shrink: 0;
 }
 
 .player-item span {
     width: 30px;
 
     height: 30px;
+
+    min-width: 30px;
 
     border-radius: 50%;
 
@@ -226,6 +304,11 @@ input {
         rgba(255, 255, 255, 0.1);
 }
 
+
+/* =========================================================
+   SETUP CONTAINER
+========================================================= */
+
 .setup-container {
     max-width: 600px;
 
@@ -235,6 +318,11 @@ input {
 
     margin-bottom: 20px;
 }
+
+
+/* =========================================================
+   SETUP SUMMARY
+========================================================= */
 
 .setup-summary {
     display: grid;
@@ -263,6 +351,11 @@ input {
     margin: 0 5px;
 }
 
+
+/* =========================================================
+   ROLE LIST
+========================================================= */
+
 .role-list {
     display: flex;
 
@@ -270,6 +363,11 @@ input {
 
     gap: 10px;
 }
+
+
+/* =========================================================
+   ROLE CARD
+========================================================= */
 
 .role-card {
     display: flex;
@@ -295,6 +393,11 @@ input {
 
     margin-top: 4px;
 }
+
+
+/* =========================================================
+   COUNTER
+========================================================= */
 
 .counter {
     display: flex;
@@ -329,6 +432,11 @@ input {
     font-weight: bold;
 }
 
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
 .warning,
 .success,
 .error {
@@ -356,11 +464,21 @@ input {
         rgba(255, 0, 70, 0.12);
 }
 
+
+/* =========================================================
+   ROLE PAGE
+========================================================= */
+
 .role-page {
     flex-direction: column;
 
     text-align: center;
 }
+
+
+/* =========================================================
+   BIG ROLE CARD
+========================================================= */
 
 .role-card-big {
     width: min(85vw, 360px);
@@ -415,11 +533,49 @@ input {
     font-size: 30px;
 }
 
+
+/* =========================================================
+   HISTORY CONTAINER
+   - Không cho toàn bộ card kéo dài
+========================================================= */
+
 .history-container {
     align-self: flex-start;
 
     margin-top: 20px;
+
+    margin-bottom: 20px;
+
+    max-height: calc(100vh - 80px);
+
+    overflow: hidden;
 }
+
+
+/* =========================================================
+   HISTORY LIST
+   - Scroll riêng
+   - 50 người vẫn gọn
+========================================================= */
+
+.history-list {
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    padding-right: 5px;
+
+    scroll-behavior: smooth;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   HISTORY ITEM
+========================================================= */
 
 .history-item {
     display: grid;
@@ -436,7 +592,92 @@ input {
     border-bottom:
         1px solid
         rgba(255, 255, 255, 0.08);
+
+    min-height: 52px;
 }
+
+
+/* =========================================================
+   HISTORY EMPTY
+========================================================= */
+
+.history-empty {
+    text-align: center;
+
+    padding: 30px 10px;
+
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   HISTORY ROOM
+========================================================= */
+
+.history-room {
+    text-align: center;
+
+    margin-bottom: 16px;
+
+    opacity: 0.8;
+}
+
+.history-room strong {
+    margin-left: 6px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   CUSTOM SCROLLBAR
+========================================================= */
+
+.player-list::-webkit-scrollbar,
+.history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.player-list::-webkit-scrollbar-track,
+.history-list::-webkit-scrollbar-track {
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    border-radius: 10px;
+}
+
+.player-list::-webkit-scrollbar-thumb,
+.history-list::-webkit-scrollbar-thumb {
+    background:
+        rgba(255, 255, 255, 0.2);
+
+    border-radius: 10px;
+}
+
+.player-list::-webkit-scrollbar-thumb:hover,
+.history-list::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(255, 255, 255, 0.35);
+}
+
+
+/* =========================================================
+   FIREFOX SCROLLBAR
+========================================================= */
+
+.player-list,
+.history-list {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, 0.2)
+        rgba(255, 255, 255, 0.04);
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
 
 @media (min-width: 768px) {
 
@@ -447,4 +688,82 @@ input {
     h1 {
         font-size: 34px;
     }
+
+    .player-list {
+        max-height: 400px;
+    }
+
+    .history-list {
+        max-height: 500px;
+    }
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .page {
+        padding: 16px 12px;
+
+        align-items: flex-start;
+    }
+
+
+    .home-card,
+    .join-card,
+    .waiting-card,
+    .host-container,
+    .setup-container,
+    .history-container {
+        padding: 18px;
+
+        border-radius: 20px;
+    }
+
+
+    h1 {
+        font-size: 24px;
+    }
+
+
+    .player-list {
+        max-height: 45vh;
+    }
+
+
+    .history-container {
+        max-height: calc(100vh - 32px);
+
+        margin-top: 0;
+
+        margin-bottom: 0;
+    }
+
+
+    .history-list {
+        max-height: 55vh;
+    }
+
+
+    .history-item {
+        grid-template-columns:
+            30px 1fr 20px 1fr;
+
+        gap: 6px;
+
+        padding: 12px 4px;
+
+        font-size: 14px;
+    }
+
+
+    .room-code {
+        font-size: 30px;
+
+        letter-spacing: 5px;
+    }
+}
+
