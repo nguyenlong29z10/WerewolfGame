@@ -1,4 +1,10 @@
+
 const rooms = new Map();
+
+
+// =====================================================
+// ROLE LIST
+// =====================================================
 
 const ROLE_LIST = [
     "Dân làng",
@@ -20,29 +26,32 @@ const ROLE_LIST = [
     "Sói",
     "Sói tiên tri",
     "Sói ngu",
-    "Sói con"
+    "Sói con",
     "Bán sói"
 ];
 
 
-// =========================
+// =====================================================
 // ROOMS
-// =========================
+// =====================================================
 
 export const getRooms = () => rooms;
 
 
-// =========================
+// =====================================================
 // CREATE ROOM
-// =========================
+// =====================================================
 
 export const createRoom = (roomCode, hostToken) => {
 
     const selectedRoles = {};
 
     ROLE_LIST.forEach((role) => {
+
         selectedRoles[role] = 0;
+
     });
+
 
     const room = {
 
@@ -66,15 +75,20 @@ export const createRoom = (roomCode, hostToken) => {
 
     };
 
-    rooms.set(roomCode, room);
+
+    rooms.set(
+        roomCode,
+        room
+    );
+
 
     return room;
 };
 
 
-// =========================
+// =====================================================
 // GET ROOM
-// =========================
+// =====================================================
 
 export const getRoom = (roomCode) => {
 
@@ -83,9 +97,9 @@ export const getRoom = (roomCode) => {
 };
 
 
-// =========================
+// =====================================================
 // DELETE ROOM
-// =========================
+// =====================================================
 
 export const deleteRoom = (roomCode) => {
 
@@ -94,45 +108,60 @@ export const deleteRoom = (roomCode) => {
 };
 
 
-// =========================
+// =====================================================
 // GET ROLE LIST
-// =========================
+// =====================================================
 
-export const getRoleList = () => ROLE_LIST;
+export const getRoleList = () => {
+
+    return ROLE_LIST;
+
+};
 
 
-// =========================
+// =====================================================
 // GET HOST ROOM STATE
-// =========================
+// =====================================================
 //
 // Không gửi hostToken / playerToken
 // xuống frontend.
 //
-// Host chỉ nhận những dữ liệu cần thiết.
-//
+// Host chỉ nhận dữ liệu cần thiết.
+// =====================================================
 
 export const getHostRoomState = (room) => {
 
     return {
 
-        roomCode: room.roomCode,
+        roomCode:
+            room.roomCode,
 
-        status: room.status,
+        status:
+            room.status,
 
-        playerCount: room.players.length,
+        playerCount:
+            room.players.length,
 
-        players: room.players.map((player) => ({
+        players:
+            room.players.map(
+                (player) => ({
 
-            id: player.id,
+                    id:
+                        player.id,
 
-            name: player.name
+                    name:
+                        player.name
 
-        })),
+                })
+            ),
 
-        selectedRoles: room.selectedRoles,
+        selectedRoles:
+            room.selectedRoles,
 
-        history: room.history
+        history:
+            room.history
 
     };
 
 };
+

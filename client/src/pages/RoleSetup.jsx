@@ -1,3 +1,4 @@
+
 import {
     useEffect,
     useState
@@ -10,6 +11,10 @@ import {
 
 import socket from "../services/socket";
 
+
+// =====================================================
+// ROLE LIST
+// =====================================================
 
 const ROLES = [
     "Dân làng",
@@ -31,15 +36,17 @@ const ROLES = [
     "Sói",
     "Sói tiên tri",
     "Sói ngu",
-    "Sói con"
+    "Sói con",
     "Bán sói"
 ];
 
 
 export default function RoleSetup() {
 
-    const { roomCode } =
-        useParams();
+    const {
+        roomCode
+    } = useParams();
+
 
     const navigate =
         useNavigate();
@@ -56,47 +63,59 @@ export default function RoleSetup() {
 
 
     // =====================================================
-    // NUMBER OF PLAYERS
+    // PLAYER COUNT
     // =====================================================
 
-    const [players, setPlayers] =
-        useState(0);
+    const [
+        players,
+        setPlayers
+    ] = useState(0);
+
+
+    // =====================================================
+    // PLAYER LIST
+    // =====================================================
+
+    const [
+        playerList,
+        setPlayerList
+    ] = useState([]);
 
 
     // =====================================================
     // ROLE QUANTITY
     // =====================================================
 
-    const [roles, setRoles] =
-        useState(() => {
+    const [
+        roles,
+        setRoles
+    ] = useState(() => {
 
-            const data = {};
-
-            ROLES.forEach(
-                (role) => {
-                    data[role] = 0;
-                }
-            );
-
-            return data;
-
-        });
+        const data = {};
 
 
-    // =====================================================
-    // REMAINING CARDS
-    // =====================================================
+        ROLES.forEach(
+            (role) => {
 
-    const [remaining, setRemaining] =
-        useState({});
+                data[role] = 0;
+
+            }
+        );
+
+
+        return data;
+
+    });
 
 
     // =====================================================
     // ERROR
     // =====================================================
 
-    const [error, setError] =
-        useState("");
+    const [
+        error,
+        setError
+    ] = useState("");
 
 
     // =====================================================
@@ -105,14 +124,10 @@ export default function RoleSetup() {
 
     useEffect(() => {
 
+
         // =================================================
         // ROOM STATE
         // =================================================
-        //
-        // Server gửi trạng thái phòng.
-        //
-        // Đây là nguồn chính để lấy số người chơi.
-        //
 
         const handleRoomState =
             (roomState) => {
@@ -122,6 +137,10 @@ export default function RoleSetup() {
                     roomState
                 );
 
+
+                // -----------------------------
+                // PLAYER COUNT
+                // -----------------------------
 
                 if (
                     roomState &&
@@ -136,8 +155,27 @@ export default function RoleSetup() {
                 }
 
 
-                // Nếu server có selectedRoles
-                // thì đồng bộ luôn.
+                // -----------------------------
+                // PLAYER LIST
+                // -----------------------------
+
+                if (
+                    roomState &&
+                    Array.isArray(
+                        roomState.players
+                    )
+                ) {
+
+                    setPlayerList(
+                        roomState.players
+                    );
+
+                }
+
+
+                // -----------------------------
+                // SELECTED ROLES
+                // -----------------------------
 
                 if (
                     roomState &&
@@ -145,7 +183,46 @@ export default function RoleSetup() {
                 ) {
 
                     setRoles(
-                        roomState.selectedRoles
+                        (prev) => ({
+
+                            ...prev,
+
+                            ...roomState.selectedRoles
+
+                        })
+                    );
+
+                }
+
+            };
+
+
+        // =================================================
+        // PLAYERS UPDATED
+        // =================================================
+
+        const handlePlayersUpdated =
+            ({ players }) => {
+
+                console.log(
+                    "PLAYERS UPDATED:",
+                    players
+                );
+
+
+                if (
+                    Array.isArray(
+                        players
+                    )
+                ) {
+
+                    setPlayerList(
+                        players
+                    );
+
+
+                    setPlayers(
+                        players.length
                     );
 
                 }
@@ -158,16 +235,28 @@ export default function RoleSetup() {
         // =================================================
 
         const handleDealCompleted =
-            ({ remainingCards }) => {
+            ({
+                history,
+                remainingCards
+            }) => {
 
-                setRemaining(
-                    remainingCards
+                console.log(
+                    "DEAL COMPLETED:",
+                    {
+                        history,
+                        remainingCards
+                    }
                 );
 
 
+                // -----------------------------------------
+                // SAU KHI CHIA XONG
+                // CHUYỂN SANG HISTORY
+                // -----------------------------------------
+
                 navigate(
-    `/host/history/${roomCode}`
-);
+                    `/host/history/${roomCode}`
+                );
 
             };
 
@@ -179,18 +268,55 @@ export default function RoleSetup() {
         const handleDealError =
             ({ message }) => {
 
-                setError(message);
+                setError(
+                    message ||
+                    "Không thể chia bài"
+                );
 
             };
 
 
         // =================================================
-        // REGISTER LISTENERS
+        // ROOM NOT FOUND
+        // =================================================
+
+        const handleRoomNotFound =
+            () => {
+
+                setError(
+                    "Phòng không tồn tại hoặc đã bị xóa"
+                );
+
+            };
+
+
+        // =================================================
+        // HOST UNAUTHORIZED
+        // =================================================
+
+        const handleHostUnauthorized =
+            () => {
+
+                setError(
+                    "Bạn không có quyền quản trò phòng này"
+                );
+
+            };
+
+
+        // =================================================
+        // REGISTER SOCKET EVENTS
         // =================================================
 
         socket.on(
             "room_state",
             handleRoomState
+        );
+
+
+        socket.on(
+            "players_updated",
+            handlePlayersUpdated
         );
 
 
@@ -206,18 +332,21 @@ export default function RoleSetup() {
         );
 
 
+        socket.on(
+            "room_not_found",
+            handleRoomNotFound
+        );
+
+
+        socket.on(
+            "host_unauthorized",
+            handleHostUnauthorized
+        );
+
+
         // =================================================
-        // REQUEST ROOM STATE
+        // REQUEST CURRENT ROOM STATE
         // =================================================
-        //
-        // RoleSetup có thể được mở sau khi game_started
-        // đã xảy ra.
-        //
-        // Vì vậy không phụ thuộc vào game_started.
-        //
-        // Khi RoleSetup mở, Host yêu cầu server gửi
-        // trạng thái phòng hiện tại.
-        //
 
         socket.emit(
             "host_reconnect",
@@ -241,6 +370,12 @@ export default function RoleSetup() {
 
 
             socket.off(
+                "players_updated",
+                handlePlayersUpdated
+            );
+
+
+            socket.off(
                 "deal_completed",
                 handleDealCompleted
             );
@@ -249,6 +384,18 @@ export default function RoleSetup() {
             socket.off(
                 "deal_error",
                 handleDealError
+            );
+
+
+            socket.off(
+                "room_not_found",
+                handleRoomNotFound
+            );
+
+
+            socket.off(
+                "host_unauthorized",
+                handleHostUnauthorized
             );
 
         };
@@ -265,9 +412,20 @@ export default function RoleSetup() {
     // =====================================================
 
     const totalCards =
-        Object.values(roles).reduce(
-            (sum, value) =>
-                sum + value,
+        Object.values(
+            roles
+        ).reduce(
+            (
+                sum,
+                value
+            ) => {
+
+                return (
+                    sum +
+                    Number(value || 0)
+                );
+
+            },
             0
         );
 
@@ -277,7 +435,10 @@ export default function RoleSetup() {
     // =====================================================
 
     const changeRole =
-        (role, amount) => {
+        (
+            role,
+            amount
+        ) => {
 
             setRoles(
                 (prev) => {
@@ -290,24 +451,28 @@ export default function RoleSetup() {
                     next[role] =
                         Math.max(
                             0,
-                            next[role] +
+                            Number(
+                                next[role] || 0
+                            ) +
                             amount
                         );
 
 
-                    // -------------------------------------
+                    // -----------------------------
                     // SAVE TO SERVER
-                    // -------------------------------------
+                    // -----------------------------
 
                     socket.emit(
                         "update_roles",
                         {
+
                             roomCode,
 
                             hostToken,
 
                             selectedRoles:
                                 next
+
                         }
                     );
 
@@ -324,41 +489,60 @@ export default function RoleSetup() {
     // DEAL CARDS
     // =====================================================
 
-    const dealCards = () => {
+    const dealCards =
+        () => {
 
-        setError("");
+            setError("");
 
 
-        // -------------------------------------
-        // CHECK NUMBER OF CARDS
-        // -------------------------------------
+            // -----------------------------
+            // CHECK PLAYER
+            // -----------------------------
 
-        if (
-            totalCards <
-            players
-        ) {
+            if (
+                players === 0
+            ) {
 
-            setError(
-                `Cần ít nhất ${players} lá bài`
+                setError(
+                    "Chưa có người chơi"
+                );
+
+                return;
+
+            }
+
+
+            // -----------------------------
+            // CHECK CARDS
+            // -----------------------------
+
+            if (
+                totalCards <
+                players
+            ) {
+
+                setError(
+                    `Cần ít nhất ${players} lá bài`
+                );
+
+                return;
+
+            }
+
+
+            // -----------------------------
+            // SEND REQUEST
+            // -----------------------------
+
+            socket.emit(
+                "deal_cards",
+                {
+                    roomCode,
+                    hostToken
+                }
             );
 
-            return;
-        }
-
-
-        // -------------------------------------
-        // SEND TO SERVER
-        // -------------------------------------
-
-        socket.emit(
-            "deal_cards",
-            {
-                roomCode,
-                hostToken
-            }
-        );
-
-    };
+        };
 
 
     // =====================================================
@@ -389,11 +573,11 @@ export default function RoleSetup() {
 
                     <div>
 
-                        👥
+                        👥{" "}
 
                         <strong>
                             {players}
-                        </strong>
+                        </strong>{" "}
 
                         người
 
@@ -402,15 +586,66 @@ export default function RoleSetup() {
 
                     <div>
 
-                        🃏
+                        🃏{" "}
 
                         <strong>
                             {totalCards}
-                        </strong>
+                        </strong>{" "}
 
                         lá
 
                     </div>
+
+                </div>
+
+
+                {/* ===================================== */}
+                {/* PLAYER LIST */}
+                {/* ===================================== */}
+
+                <div className="player-list">
+
+                    <h3>
+                        👥 NGƯỜI CHƠI
+                    </h3>
+
+
+                    {playerList.length === 0 ? (
+
+                        <p>
+                            Chưa có người chơi
+                        </p>
+
+                    ) : (
+
+                        playerList.map(
+                            (
+                                player,
+                                index
+                            ) => (
+
+                                <div
+                                    className="player-item"
+                                    key={
+                                        player.id ||
+                                        index
+                                    }
+                                >
+
+                                    <span>
+                                        {index + 1}.
+                                    </span>
+
+                                    <strong>
+                                        {player.name}
+                                    </strong>
+
+                                </div>
+
+                            )
+                        )
+
+                    )}
 
                 </div>
 
@@ -438,15 +673,16 @@ export default function RoleSetup() {
                 {/* SUCCESS */}
                 {/* ===================================== */}
 
-                {totalCards >= players && (
+                {totalCards >= players &&
+                    players > 0 && (
 
-                    <div className="success">
+                        <div className="success">
 
-                        ✓ Đủ bài để chia
+                            ✓ Đủ bài để chia
 
-                    </div>
+                        </div>
 
-                )}
+                    )}
 
 
                 {/* ===================================== */}
@@ -483,6 +719,7 @@ export default function RoleSetup() {
                                 <div className="counter">
 
                                     <button
+                                        type="button"
                                         onClick={() =>
                                             changeRole(
                                                 role,
@@ -495,11 +732,15 @@ export default function RoleSetup() {
 
 
                                     <span>
-                                        {roles[role]}
+                                        {
+                                            roles[role] ??
+                                            0
+                                        }
                                     </span>
 
 
                                     <button
+                                        type="button"
                                         onClick={() =>
                                             changeRole(
                                                 role,
@@ -540,15 +781,17 @@ export default function RoleSetup() {
                 {/* ===================================== */}
 
                 <button
+                    type="button"
                     className="primary-btn deal-btn"
                     onClick={dealCards}
                     disabled={
-                        totalCards <
-                        players
+                        players === 0 ||
+                        totalCards < players
                     }
                 >
                     🃏 CHIA BÀI
                 </button>
+
 
             </div>
 
@@ -557,3 +800,4 @@ export default function RoleSetup() {
     );
 
 }
+
