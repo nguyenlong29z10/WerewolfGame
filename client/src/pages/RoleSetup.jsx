@@ -32,6 +32,7 @@ const ROLES = [
     "Sói tiên tri",
     "Sói ngu",
     "Sói con"
+    "Bán sói"
 ];
 
 
@@ -165,8 +166,8 @@ export default function RoleSetup() {
 
 
                 navigate(
-                    `/host/${roomCode}`
-                );
+    `/host/history/${roomCode}`
+);
 
             };
 

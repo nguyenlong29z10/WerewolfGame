@@ -21,6 +21,7 @@ const ROLE_LIST = [
     "Sói tiên tri",
     "Sói ngu",
     "Sói con"
+    "Bán sói"
 ];
 
 
